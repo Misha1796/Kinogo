@@ -9,6 +9,7 @@
         fetch(url)
             .then(response => response.text())
             .then(html => {
+                // Ищем ссылку на сериал или фильм
                 let match = html.match(/href="(https:\/\/kinogo\.online\/serialy\/[^"]+\.html)"/i);
                 if (!match) match = html.match(/href="(https:\/\/kinogo\.online\/film\/[^"]+\.html)"/i);
                 callback(match ? match[1] : null);
@@ -16,22 +17,22 @@
             .catch(() => callback(null));
     }
 
-    // Функция открытия Kinogo
+    // Открытие Kinogo через встроенный плеер Lampa
     function openKinogo(card) {
         let title = card.title || card.original_title || '';
         if (!title) {
-            Lampa.Noty.show('Название не найдено');
+            Lampa.Noty.show('Название фильма не найдено');
             return;
         }
 
         Lampa.Noty.show('Поиск на Kinogo...');
-
         searchKinogo(title, function(url) {
             if (!url) {
                 Lampa.Noty.show('Не найдено на Kinogo');
                 return;
             }
 
+            // Запуск плеера Lampa
             Lampa.Player.play({
                 title: title,
                 url: url
@@ -44,7 +45,6 @@
         if (e.type === 'complite') {
             let card = e.data.movie;
 
-            // Кнопка ▶ Kinogo
             e.object.append({
                 title: '▶ Kinogo',
                 icon: 'play',
